@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Authors>MTM Suhail
-</Authors>
+    <Authors>MTM Suhail</Authors>
     <ApplicationVersion>1.0.0</ApplicationVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>ESC_POS_USB_NET</RootNamespace>
@@ -17,10 +16,11 @@
     <RepositoryUrl>https://github.com/mtmsuhail/ESC-POS-USB-NET</RepositoryUrl>
     <NeutralLanguage>English</NeutralLanguage>
     <Title>ESC/POS USB Print </Title>
-    <Version>1.1.2</Version>
+    <Version>1.1.3-custom</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType />
     <PackageTags>ESC/POS ThermalPrinter C# .Net USB Printing</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

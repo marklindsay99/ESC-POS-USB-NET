@@ -28,7 +28,7 @@ namespace ESC_POS_USB_NET_DEMO
         {
             Printer printer = new Printer(txtPrinterName.Text);
             Bitmap image =new Bitmap ( Bitmap.FromFile("Icon.bmp"));
-            printer.Image(image);
+            printer.Image(image, 288);
             printer.FullPaperCut();
             printer.PrintDocument();
         }
