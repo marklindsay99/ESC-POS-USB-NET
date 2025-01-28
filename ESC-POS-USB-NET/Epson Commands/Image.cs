@@ -33,18 +33,16 @@ namespace ESC_POS_USB_NET.EpsonCommands
                 }
             }
 
-            return new BitmapData()
-            {
-                Dots = dots,
-                Height = xheight,
-                Width = xwidth
-            };
+            return new BitmapData() { Dots = dots, Height = xheight, Width = xwidth };
         }
 
-        byte[] IImage.Print(Bitmap image, int customWidth = 288)
+        byte[] IImage.Print(Bitmap image, int printerWidth = 550, int logoWidth = 288)
         {
-            // Specify the desired width here (e.g., half of 576 = 288)
-            var data = GetBitmapData(image, customWidth);
+            // **Step 1: Center the Resized Logo in a Full-Width Bitmap**
+            Bitmap centeredImage = CreateCenteredBitmap(image, printerWidth, logoWidth);
+
+            // **Step 2: Convert to BitmapData**
+            var data = GetBitmapData(centeredImage, printerWidth);
 
             BitArray dots = data.Dots;
             byte[] width = BitConverter.GetBytes(data.Width);
@@ -65,8 +63,8 @@ namespace ESC_POS_USB_NET.EpsonCommands
                 bw.Write((char)0x1B);
                 bw.Write('*');         // bit-image mode
                 bw.Write((byte)33);    // 24-dot double-density
-                bw.Write(width[0]);  // width low byte
-                bw.Write(width[1]);  // width high byte
+                bw.Write(width[0]);  // Width low byte
+                bw.Write(width[1]);  // Width high byte
 
                 for (int x = 0; x < data.Width; ++x)
                 {
@@ -85,7 +83,6 @@ namespace ESC_POS_USB_NET.EpsonCommands
                             }
                             slice |= (byte)((v ? 1 : 0) << (7 - b));
                         }
-
                         bw.Write(slice);
                     }
                 }
@@ -100,6 +97,26 @@ namespace ESC_POS_USB_NET.EpsonCommands
             byte[] bytes = stream.ToArray();
             bw.Dispose();
             return bytes;
+        }
+
+
+        private static Bitmap CreateCenteredBitmap(Bitmap original, int printerWidth, int logoWidth)
+        {
+            int logoHeight = (int)((double)logoWidth / original.Width * original.Height); // Maintain aspect ratio
+
+            // Resize the original logo to the specified width
+            Bitmap resizedLogo = new Bitmap(original, new Size(logoWidth, logoHeight));
+
+            // Create a full-width blank bitmap
+            Bitmap centeredBitmap = new Bitmap(printerWidth, logoHeight);
+            using (Graphics g = Graphics.FromImage(centeredBitmap))
+            {
+                g.Clear(Color.White); // Fill background with white
+                int xOffset = (printerWidth - logoWidth) / 2; // Calculate center position
+                g.DrawImage(resizedLogo, xOffset, 0); // Draw resized logo centered
+            }
+
+            return centeredBitmap;
         }
     }
 
